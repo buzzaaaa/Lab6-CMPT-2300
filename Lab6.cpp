@@ -31,7 +31,7 @@ T Stack<T>::pop()
 	}
 	T top = stackVector.back();
 	stackVector.pop_back();
-	std::cout << "Popped: " << top << '\n';
+	//std::cout << "Popped: " << top << '\n';
 	return top;
 }
 template <class T>
@@ -69,7 +69,7 @@ void Stack<T>::copy(std::string &input)
 }
 int main()
 {
-	std::string test = "A+B*C";
+	std::string test = "A+B*C-E";
 	//std::cout << test.length() << '\n';
 	in2postfix(test);
 	//for (int i = 0; i < test.length(); i++)
@@ -80,19 +80,23 @@ int main()
 	//testString.push('a');
 	//testString.push('b');
 	//testString.push('c');
-	///*testString.display();*/
+	//test.display();
 	//testString.top();
 }
 std::string in2postfix(std::string inputInfix) {
 	Stack<char> postfix;
-	Stack<char> operatorList;
+	Stack<char> operatorStack;
 	char op;
 	std::string output;
 	size_t length = inputInfix.length();
+	for (unsigned int i = 0; i < length; i++) {
+		std::cout << inputInfix[i];
+	}
+	std::cout << '\n';
 	for (unsigned int i = 0; i < length; i++)
 	{
 		if (isalpha(inputInfix[i])) {
-			std::cout << "isAlpha: " << inputInfix[i] << " push into postfix" << '\n';
+			std::cout << "operand detected: '" << inputInfix[i] << "' push into postfix" << '\n';
 			postfix.push(inputInfix[i]);
 		}
 		else if (inputInfix[i] == '+' 
@@ -101,28 +105,33 @@ std::string in2postfix(std::string inputInfix) {
 			|| inputInfix[i] == '/' 
 			|| inputInfix[i] == '%') 
 		{
-			std::cout << "operator detected" << '\n';
-			if (operatorList.isEmpty())
+			std::cout << "operator '" << inputInfix[i] << "' detected!, ";
+			if (operatorStack.isEmpty())
 			{
-				operatorList.push(inputInfix[i]);
-				std::cout << "list empty, push into operator stack" << inputInfix[i] << '\n';
+				operatorStack.push(inputInfix[i]);
+				std::cout << "list empty, push '" << inputInfix[i] << "' into operator stack" << '\n';
 			}
-			else if ((operatorList.top() == '*' || operatorList.top() == '/' || operatorList.top() == '%') && (inputInfix[i] == '+' || inputInfix[i] == '-'))//stack has more precedence than operator
+			else if ((operatorStack.top() == '*' || operatorStack.top() == '/' || operatorStack.top() == '%') && (inputInfix[i] == '+' || inputInfix[i] == '-'))//stack has more precedence than operator
 			{
-				while (!(operatorList.isEmpty()))
+				std::cout << "top stack has more precedence than operator, pop operator stack and push into postfix" << '\n';
+				while (!(operatorStack.isEmpty()))
 				{
-					std::cout << "pop operator stack and push into postfix" << '\n';
-					postfix.push(operatorList.top());
-					operatorList.pop();
+					postfix.push(operatorStack.top());
+					std::cout << "poping: " << operatorStack.top() << '\n';
+					operatorStack.pop();
 				}
+				std::cout << "push '" << inputInfix[i] << "' into operator stack" << '\n';
+				operatorStack.push(inputInfix[i]);
 			}
-			else if ((inputInfix[i] == '*' || inputInfix[i] == '/' || inputInfix[i] == '%') && (operatorList.top() == '+' || operatorList.top() == '-')) {//stack has less precedence than operator
-				std::cout << "top stack has less precedence than operator, push into postfix" << inputInfix[i] << '\n';
-				postfix.push(inputInfix[i]);
+			else if ((inputInfix[i] == '*' || inputInfix[i] == '/' || inputInfix[i] == '%') && (operatorStack.top() == '+' || operatorStack.top() == '-')) {//stack has less precedence than operator
+				std::cout << "top stack has less precedence than operator, push '" << inputInfix[i] << "' into operator stack" << '\n';
+				operatorStack.push(inputInfix[i]);
 			}
+			//the problem is '-' is still left in the stack; however, the loop has ended
 		}
 	}
-	//postfix.display();
+	std::cout << "displaying postfix: ";
+	postfix.display();
 	postfix.copy(output);
 	return output;
 }

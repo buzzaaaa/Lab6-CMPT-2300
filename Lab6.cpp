@@ -74,10 +74,11 @@ int main()
     std::string test2 = "X%D+Y-C";
     std::string test3 = "X+Y*Z+P*Q+R*S";
     std::string test4 = "*+ABt";
+    std::string test5 = "((A+B)*C-D)*E";
     //std::cout << test.length() << '\n';
     //in2postfix(test);
     //in2postfix(test2);
-    in2postfix(test3);
+    in2postfix(test);
     //for (int i = 0; i < test.length(); i++)
     //{
     //    std::cout << test[i] << " ";
@@ -117,6 +118,9 @@ std::string in2postfix(std::string inputInfix) {
             std::cout << "-------------------------------" << '\n';
             std::cout << "postfix stack: ";
             postfix.display();
+            std::cout << '\n';
+            std::cout << "operator stack: ";
+            operatorStack.display();
             std::cout << "-------------------------------" << '\n';
         }
         else if (isOperator(inputInfix[i]))
@@ -127,14 +131,17 @@ std::string in2postfix(std::string inputInfix) {
                 operatorStack.push(inputInfix[i]);
                 std::cout << "list empty, push '" << inputInfix[i] << "' into operator stack" << '\n';
                 std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
                 std::cout << "operator stack: ";
                 operatorStack.display();
                 std::cout << "-------------------------------" << '\n';
             }
             else if ((operatorStack.top() == '*' || operatorStack.top() == '/' || operatorStack.top() == '%') && (inputInfix[i] == '+' || inputInfix[i] == '-'))
             {
-                std::cout << "top stack has more precedence than operator, pop operator stack and push into postfix" << '\n';
-                while (!(operatorStack.isEmpty()))
+                std::cout << "top stack has more precedence than operator, pop operator stack and push into postfix" << '\n'; //now this doesn't work without ()
+                /*while (!(operatorStack.isEmpty()))
                 {
                     postfix.push(operatorStack.top());
                     std::cout << "-------------------------------" << '\n';
@@ -143,10 +150,24 @@ std::string in2postfix(std::string inputInfix) {
                     std::cout << "-------------------------------" << '\n';
                     std::cout << "poping: " << operatorStack.top() << '\n';
                     operatorStack.pop();
-                }
+                }*/
+                postfix.push(operatorStack.top());
+                std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
+                std::cout << "operator stack: ";
+                operatorStack.display();
+                std::cout << "-------------------------------" << '\n';
+                std::cout << "poping: " << operatorStack.top() << '\n';
+                operatorStack.pop();
+
                 std::cout << "push '" << inputInfix[i] << "' into operator stack" << '\n';
                 operatorStack.push(inputInfix[i]);
                 std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
                 std::cout << "operator stack: ";
                 operatorStack.display();
                 std::cout << "-------------------------------" << '\n';
@@ -156,6 +177,19 @@ std::string in2postfix(std::string inputInfix) {
                 std::cout << "top stack has less precedence than operator, push '" << inputInfix[i] << "' into operator stack" << '\n';
                 operatorStack.push(inputInfix[i]);
                 std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
+                std::cout << "operator stack: ";
+                operatorStack.display();
+                std::cout << "-------------------------------" << '\n';
+            }
+            else if (operatorStack.top() == '(') {
+                operatorStack.push(inputInfix[i]);
+                std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
                 std::cout << "operator stack: ";
                 operatorStack.display();
                 std::cout << "-------------------------------" << '\n';
@@ -166,20 +200,60 @@ std::string in2postfix(std::string inputInfix) {
                 std::cout << "-------------------------------" << '\n';
                 std::cout << "postfix stack: ";
                 postfix.display();
+                std::cout << '\n';
+                std::cout << "operator stack: ";
+                operatorStack.display();
                 std::cout << "-------------------------------" << '\n';
                 std::cout << "poping: " << operatorStack.top() << '\n';
                 operatorStack.pop();
                 operatorStack.push(inputInfix[i]);
                 std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
                 std::cout << "operator stack: ";
                 operatorStack.display();
                 std::cout << "-------------------------------" << '\n';
             }
         }
+        else if (inputInfix[i] == '(') {
+            operatorStack.push(inputInfix[i]);
+            std::cout << "-------------------------------" << '\n';
+            std::cout << "postfix stack: ";
+            postfix.display();
+            std::cout << '\n';
+            std::cout << "operator stack: ";
+            operatorStack.display();
+            std::cout << "-------------------------------" << '\n';
+        }
+        else if (inputInfix[i] == ')')
+        {
+            while (operatorStack.top() != '(') //this causes a problem
+            {
+                postfix.push(operatorStack.top());
+                std::cout << "-------------------------------" << '\n';
+                std::cout << "postfix stack: ";
+                postfix.display();
+                std::cout << '\n';
+                std::cout << "operator stack: ";
+                operatorStack.display();
+                std::cout << "-------------------------------" << '\n';
+                std::cout << "poping: " << operatorStack.top() << '\n';
+                operatorStack.pop();
+            }
+        }
+        else {
+            std::cout << "unknown operand nor operator detected, end loop, please check your input" << '\n';
+        }
         if (i + 1 == length) {
             std::cout << "loop ended, pop all the operator stack, and push it into postfix" << '\n';
             while (!(operatorStack.isEmpty()))
             {
+                if (operatorStack.top() == '(')
+                {
+                    operatorStack.pop();
+                    continue;
+                }
                 postfix.push(operatorStack.top());
                 std::cout << "poping: " << operatorStack.top() << '\n';
                 operatorStack.pop();
@@ -245,7 +319,6 @@ std::string pre2infix(std::string inputPrefix) {
                 operatorStack.display();
                 std::cout << "-------------------------------" << '\n';
             }
-
         }
         /*
         if (i + 1 == length) {

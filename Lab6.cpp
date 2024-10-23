@@ -78,7 +78,7 @@ int main()
     //std::cout << test.length() << '\n';
     //in2postfix(test);
     //in2postfix(test2);
-    in2postfix(test);
+    in2postfix(test5);
     //for (int i = 0; i < test.length(); i++)
     //{
     //    std::cout << test[i] << " ";
@@ -98,6 +98,15 @@ bool isOperator(char inputChar) {
         || inputChar == '%')
     {
         return true;
+    }
+    return false;
+}
+bool isBracket(std::string inputString) {
+    for (size_t i = 0; i < inputString.length(); i++)
+    {
+        if (inputString[i] == '(') {
+            return true;
+        }
     }
     return false;
 }
@@ -141,36 +150,47 @@ std::string in2postfix(std::string inputInfix) {
             else if ((operatorStack.top() == '*' || operatorStack.top() == '/' || operatorStack.top() == '%') && (inputInfix[i] == '+' || inputInfix[i] == '-'))
             {
                 std::cout << "top stack has more precedence than operator, pop operator stack and push into postfix" << '\n'; //now this doesn't work without ()
-                /*while (!(operatorStack.isEmpty()))
+                if (isBracket(inputInfix))
                 {
                     postfix.push(operatorStack.top());
                     std::cout << "-------------------------------" << '\n';
                     std::cout << "postfix stack: ";
                     postfix.display();
+                    std::cout << '\n';
+                    std::cout << "operator stack: ";
+                    operatorStack.display();
                     std::cout << "-------------------------------" << '\n';
                     std::cout << "poping: " << operatorStack.top() << '\n';
                     operatorStack.pop();
-                }*/
-                postfix.push(operatorStack.top());
-                std::cout << "-------------------------------" << '\n';
-                std::cout << "postfix stack: ";
-                postfix.display();
-                std::cout << '\n';
-                std::cout << "operator stack: ";
-                operatorStack.display();
-                std::cout << "-------------------------------" << '\n';
-                std::cout << "poping: " << operatorStack.top() << '\n';
-                operatorStack.pop();
 
-                std::cout << "push '" << inputInfix[i] << "' into operator stack" << '\n';
-                operatorStack.push(inputInfix[i]);
-                std::cout << "-------------------------------" << '\n';
-                std::cout << "postfix stack: ";
-                postfix.display();
-                std::cout << '\n';
-                std::cout << "operator stack: ";
-                operatorStack.display();
-                std::cout << "-------------------------------" << '\n';
+                    std::cout << "push '" << inputInfix[i] << "' into operator stack" << '\n';
+                    operatorStack.push(inputInfix[i]);
+                    std::cout << "-------------------------------" << '\n';
+                    std::cout << "postfix stack: ";
+                    postfix.display();
+                    std::cout << '\n';
+                    std::cout << "operator stack: ";
+                    operatorStack.display();
+                    std::cout << "-------------------------------" << '\n';
+                }
+                else {
+                    while (!(operatorStack.isEmpty()))
+                    {
+                        postfix.push(operatorStack.top());
+                        std::cout << "-------------------------------" << '\n';
+                        std::cout << "postfix stack: ";
+                        postfix.display();
+                        std::cout << "-------------------------------" << '\n';
+                        std::cout << "poping: " << operatorStack.top() << '\n';
+                        operatorStack.pop();
+                    }
+                    std::cout << "push '" << inputInfix[i] << "' into operator stack" << '\n';
+                    operatorStack.push(inputInfix[i]);
+                    std::cout << "-------------------------------" << '\n';
+                    std::cout << "operator stack: ";
+                    operatorStack.display();
+                    std::cout << "-------------------------------" << '\n';
+                }
             }
             else if ((inputInfix[i] == '*' || inputInfix[i] == '/' || inputInfix[i] == '%') && (operatorStack.top() == '+' || operatorStack.top() == '-'))
             {
